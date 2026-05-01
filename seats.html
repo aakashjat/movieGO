@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Seats</title>
+
+<style>
+  :root {
+    --bg-image-light: url('LIGHT_IMAGE.jpg');
+    --bg-image-dark: url('DARK_IMAGE.jpg');
+  }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    transition: 0.4s;
+  }
+
+  body.light { background-image: var(--bg-image-light); color: black; }
+  body.dark { background-image: var(--bg-image-dark); color: white; }
+
+  .toggle-btn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+
+    border-radius: 6px;
+    border: 2px solid #ccc;
+
+    font-size: 18px;
+    padding: 0;      
+    cursor: pointer;
+    z-index: 999;
+}
+
+
+
+  .container {
+    max-width: 700px;
+    background: rgba(0,0,0,0.6);
+    padding: 25px;
+    margin: auto;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+  }
+
+  .seats {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .seat {
+    width: 35px;
+    height: 35px;
+    background: #dfe6e9;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .seat.occupied { background: #636e72; cursor: not-allowed; }
+  .seat.selected { background: #6c5ce7; }
+
+  .seat.hot {
+    background: #ff7675 !important;   
+    box-shadow: 0 0 10px #ff7675;
+    border: 2px solid #d63031;
+}
+
+
+ button:not(.toggle-btn) {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    background: #00b894;
+    color: white;
+    cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+
+<button class="toggle-btn" onclick="toggleTheme()">🌗</button>
+
+<div class="container">
+
+  <h2>🎟 Seat Selection</h2>
+  <p id="details"></p>
+
+  <div class="seats" id="seatContainer"></div>
+
+  <p id="summary">Selected Seats: 0 | Total: $0</p>
+
+  <button id="bookBtn">Book Tickets</button>
+
+  <h3>📜 Booking History</h3>
+  <ul id="history"></ul>
+
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const [movieName, moviePrice] = urlParams.get("movie").split("|");
+const date = urlParams.get("date");
+const time = urlParams.get("time");
+const price = parseInt(moviePrice);
+
+document.getElementById("details").innerHTML =
+  `<b>Movie:</b> ${movieName} | <b>Date:</b> ${date} | <b>Time:</b> ${time}`;
+
+const seatContainer = document.getElementById("seatContainer");
+
+const hotSeatIndexes = [19, 20, 21, 26, 27, 28]; 
+
+for (let i = 0; i < 48; i++) {
+  const seat = document.createElement("div");
+  seat.classList.add("seat");
+
+  if (hotSeatIndexes.includes(i)) {
+      seat.classList.add("hot");
+  }
+
+  if (!hotSeatIndexes.includes(i) && Math.random() < 0.25) {
+      seat.classList.add("occupied");
+  }
+
+  seatContainer.appendChild(seat);
+}
+
+
+function updateSummary() {
+  const selected = document.querySelectorAll(".seat.selected").length;
+  document.getElementById("summary").innerText =
+    `Selected Seats: ${selected} | Total: $${selected * price}`;
+}
+
+seatContainer.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("seat")) return;
+  if (e.target.classList.contains("occupied")) return;
+  e.target.classList.toggle("selected");
+  updateSummary();
+});
+
+document.getElementById("bookBtn").addEventListener("click", () => {
+  const selectedSeats = document.querySelectorAll(".seat.selected");
+  if (selectedSeats.length === 0) return alert("Please select seats!");
+
+  let username = prompt("Enter your name:");
+  if (!username || username.trim() === "") {
+      alert("Name is required to book tickets.");
+      return;
+  }
+
+  selectedSeats.forEach(s => {
+    s.classList.remove("selected");
+    s.classList.add("occupied");
+  });
+
+  let entry = document.createElement("li");
+  entry.innerText =
+    `${username} booked → ${movieName} | ${date} | ${time} | Seats: ${selectedSeats.length} | Total: $${selectedSeats.length * price}`;
+
+  document.getElementById("history").appendChild(entry);
+
+  updateSummary();
+});
+
+
+function toggleTheme() {
+  const newTheme = document.body.classList.contains("light") ? "dark" : "light";
+  document.body.className = newTheme;
+  localStorage.setItem("theme", newTheme);
+}
+
+
+document.body.className = localStorage.getItem("theme") || "dark";
+</script>
+
+</body>
+</html>

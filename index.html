@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Movie</title>
+
+<style>
+  :root {
+    --bg-image-light: url('LIGHT_IMAGE.jpg');
+    --bg-image-dark: url('DARK_IMAGE.jpg');
+  }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    transition: 0.4s;
+  }
+
+  body.light {
+    background-image: var(--bg-image-light);
+    color: black;
+  }
+
+  body.dark {
+    background-image: var(--bg-image-dark);
+    color: white;
+  }
+
+  
+  #clockBox {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 10px 18px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+  }
+
+
+  .toggle-btn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+    border-radius: 6px;
+    border: 2px solid #ccc;
+    font-size: 18px;
+    padding: 0;
+    cursor: pointer;
+    z-index: 999;
+  }
+
+  
+.logo-box {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+.logo-box img {
+    width: 150px;
+    height: auto;
+    border-radius: 12px;
+
+    
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.7),
+                0 0 18px rgba(255, 255, 255, 0.5);
+
+    animation: glowPulse 2.5s infinite ease-in-out;
+}
+
+.logo-box h1 {
+    margin-top: 10px;
+    font-size: 36px;
+    color: gold;
+    text-shadow: 
+        0 0 8px rgba(255,255,255,0.5),
+        0 0 12px rgba(255,215,0,0.8);
+    animation: fadeIn 1.4s ease-in-out;
+}
+
+
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 10px rgba(255,255,255,0.6); }
+    50% { box-shadow: 0 0 22px rgba(255,255,255,1); }
+    100% { box-shadow: 0 0 10px rgba(255,255,255,0.6); }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+
+  .logo-box img {
+    width: 150px;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  .logo-box h1 {
+    margin-top: 10px;
+    font-size: 36px;
+    color: gold;
+    text-shadow: 0 0 10px rgba(0,0,0,0.6);
+  }
+
+  
+  .container {
+    max-width: 600px;
+    background: rgba(0,0,0,0.65);
+    padding: 25px;
+    margin: auto;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    margin-top: 40px; 
+  }
+
+  label, select {
+    font-size: 18px;
+    margin-top: 10px;
+    display: block;
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  button:not(.toggle-btn) {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    background: #00b894;
+    color: white;
+    cursor: pointer;
+  }
+
+  #trailerBox { display: none; margin-top: 20px; }
+  iframe { width: 100%; height: 300px; border-radius: 10px; }
+
+</style>
+</head>
+<body>
+
+
+<div id="clockBox"></div>
+
+
+<button class="toggle-btn" onclick="toggleTheme()">🌗</button>
+
+
+<div class="logo-box">
+  <img src="moviego_logo.jpg" alt="MovieGo Logo">
+  <h1>MovieGo</h1>
+</div>
+
+<div class="container">
+  <h2>🎬 Select Movie</h2>
+
+  <label for="movie">Movie:</label>
+  <select id="movie" onchange="showTrailer()">
+    <option value="">-- Select Movie --</option>
+    <option value="Avengers|200">Avengers: Endgame ($200)</option>
+    <option value="Inception|150">Inception ($150)</option>
+    <option value="Interstellar|180">Interstellar ($180)</option>
+  </select>
+
+  <div id="trailerBox">
+    <h3>🎞 Trailer</h3>
+    <iframe id="trailerFrame" allowfullscreen></iframe>
+
+    <a id="ratingBox" target="_blank" style="
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        background: rgba(0,0,0,0.5);
+        padding: 8px 12px;
+        border-radius: 6px;
+        width: fit-content;
+        display: inline-block;
+        color: yellow;
+        text-decoration: none;
+    "></a>
+  </div>
+
+  <label for="date">Date:</label>
+  <select id="date">
+    <option>2025-11-14</option>
+    <option>2025-11-15</option>
+    <option>2025-11-16</option>
+    <option>2025-11-17</option>
+  </select>
+
+  <label for="time">Show Time:</label>
+  <select id="time">
+    <option>11:00 AM</option>
+    <option>2:00 PM</option>
+    <option>6:00 PM</option>
+    <option>9:00 PM</option>
+  </select>
+
+  <button onclick="goSeatPage()">Continue</button>
+</div>
+
+<script>
+const movieDataInfo = {
+  "Avengers": {
+    trailer: "https://www.youtube.com/embed/hA6hldpSTF8",
+    rating: "⭐ IMDb: 8.4/10",
+    imdbLink: "https://www.imdb.com/title/tt4154796/"
+},
+  "Inception": {
+    trailer: "https://www.youtube.com/embed/YoHD9XEInc0",
+    rating: "⭐ IMDb: 8.8/10",
+    imdbLink: "https://www.imdb.com/title/tt1375666/"
+  },
+  "Interstellar": {
+    trailer: "https://www.youtube.com/embed/zSWdZVtXT7E",
+    rating: "⭐ IMDb: 8.7/10",
+    imdbLink: "https://www.imdb.com/title/tt0816692/"
+  }
+};
+
+function showTrailer() {
+  let movie = document.getElementById("movie").value;
+  let trailerBox = document.getElementById("trailerBox");
+  let trailerFrame = document.getElementById("trailerFrame");
+
+  if (!movie) {
+    trailerBox.style.display = "none";
+    trailerFrame.src = "";
+    return;
+  }
+
+  trailerBox.style.display = "block";
+  let movieName = movie.split("|")[0];
+
+  trailerFrame.src = movieDataInfo[movieName].trailer;
+
+  let ratingBox = document.getElementById("ratingBox");
+  ratingBox.innerText = movieDataInfo[movieName].rating;
+  ratingBox.href = movieDataInfo[movieName].imdbLink;
+}
+
+function goSeatPage() {
+  let movie = document.getElementById("movie").value;
+  if (!movie) return alert("Please select a movie");
+
+  let date = document.getElementById("date").value;
+  let time = document.getElementById("time").value;
+
+  window.location.href = `seats.html?movie=${movie}&date=${date}&time=${time}`;
+}
+
+function toggleTheme() {
+  const newTheme = document.body.classList.contains("light") ? "dark" : "light";
+  document.body.className = newTheme;
+  localStorage.setItem("theme", newTheme);
+}
+
+document.body.className = localStorage.getItem("theme") || "dark";
+
+
+function updateClock() {
+    const now = new Date();
+    let hrs = String(now.getHours()).padStart(2, '0');
+    let min = String(now.getMinutes()).padStart(2, '0');
+    let sec = String(now.getSeconds()).padStart(2, '0');
+
+    document.getElementById("clockBox").innerText =
+        `${hrs}:${min}:${sec}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+</script>
+
+</body>
+</html>
